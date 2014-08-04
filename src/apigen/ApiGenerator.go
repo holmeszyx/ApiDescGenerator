@@ -88,7 +88,7 @@ func (a *ApiDesc) IsAbsUrl() bool{
 	indexHttp= strings.Index(a.url, "http://")
 	if indexHttp == 0{
 		return true;
-	}else if indexHttps = strings.Index(a.url, "http://"); indexHttps == 0{
+	}else if indexHttps = strings.Index(a.url, "https://"); indexHttps == 0{
 		return true
 	}
 	return false;
