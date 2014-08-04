@@ -1,4 +1,4 @@
-package api
+package apigen
 
 import (
 	"bufio"
@@ -10,11 +10,15 @@ import (
 )
 
 const (
+	// 未知类型
 	TYPE_UNKNOWN int = 0;
+	// Api描述名称
 	TYPE_NAME int = 1
+	// Api描述Item
 	TYPE_ITEM int = 2
 )
 
+// Aip描述
 type ApiDesc struct {
 	name string
 	item []string
@@ -78,6 +82,19 @@ func (a *ApiDesc) HasDesc() bool{
 	return len(a.desc) > 0
 }
 
+// 是否是绝对Url
+func (a *ApiDesc) IsAbsUrl() bool{
+	var indexHttp, indexHttps int
+	indexHttp= strings.Index(a.url, "http://")
+	if indexHttp == 0{
+		return true;
+	}else if indexHttps = strings.Index(a.url, "http://"); indexHttps == 0{
+		return true
+	}
+	return false;
+}
+
+// 解析
 func ParserReader(rd io.Reader) []*ApiDesc{
 
 	buffReader := bufio.NewReader(rd)
@@ -88,9 +105,9 @@ func ParserReader(rd io.Reader) []*ApiDesc{
 	var lastName string
 
 	var lastApi *ApiDesc
-	for buffLine, isPerfix, err := buffReader.ReadLine(); err == nil; buffLine, isPerfix, err = buffReader.ReadLine(){
+	for buffLine, isPrefix, err := buffReader.ReadLine(); err == nil; buffLine, isPrefix, err = buffReader.ReadLine(){
 		line := string(buffLine)
-		if isPerfix{
+		if isPrefix{
 			baseLine = baseLine + line
 			continue
 		}else{
@@ -131,14 +148,14 @@ func ParserReader(rd io.Reader) []*ApiDesc{
 	}
 
 	//	for _, v := range(apis){
-	//		fmt.Println("api", v)
+	//		fmt.Println("apigen", v)
 	//	}
 	return apis
 }
 
-// 解析
-func Parser(yaml string) []*ApiDesc{
-	strReader := strings.NewReader(yaml);
+// 解析string
+func Parser(descStr string) []*ApiDesc{
+	strReader := strings.NewReader(descStr);
 
 	apis := ParserReader(strReader)
 	return apis
@@ -163,21 +180,11 @@ func parserLine(line string) (string, int, error){
 		// 解析列表
 		item, err := parserItem(line, firstNoSpace)
 		return item, TYPE_ITEM, err
-
-//		if err == nil{
-//			if lastName != ""{
-//				fmt.Println("----item is:", item)
-//			}else{
-//				fmt.Println("--ignore--item is:", item)
-//			}
-//		}else{
-//			fmt.Println("parser item err,", line, err)
-//		}
-
 	}
 	return "", TYPE_UNKNOWN, nil
 }
 
+// 解析Api描述的名称项
 func parserName(line string) (string, error){
 	end := strings.IndexByte(line, byte(":"[0]));
 	if end > -1{
@@ -187,6 +194,7 @@ func parserName(line string) (string, error){
 	panic(": no found in line, it's not a Name")
 }
 
+// 解析Api描述的Item项
 func parserItem(line string, firstNoSpace int)(string, error){
 	if line[firstNoSpace] != "-"[0]{
 		e := errors.New("item not start with '-'," + string(line[firstNoSpace]))
@@ -204,11 +212,12 @@ func parserItem(line string, firstNoSpace int)(string, error){
 	}
 }
 
+// 获取第一个不是空白字符的index
 func getFirstNoSpaceIndex(line string) int{
 //	length := len(line)
 	var first int = -1
 	for i, v := range(line){
-		if !isSpace((byte)(v)) {
+		if !IsSpace((byte)(v)) {
 			first = i
 			break
 		}
@@ -216,6 +225,7 @@ func getFirstNoSpaceIndex(line string) int{
 	return first
 }
 
-func isSpace(c byte) bool{
+// 是否是空白字符
+func IsSpace(c byte) bool{
 	return c == '\n' || c == '\t' || c == '\f' || c == '\r' || c == ' ';
 }
