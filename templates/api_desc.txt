@@ -1,0 +1,16 @@
+HOST:
+    - http://127.0.0.1
+    - 0
+    - 主机
+
+APP_UPDATE:
+    - /app/checkupdate
+    - 检查应用更新
+
+LOGIN:
+    - /account/Login
+    - 用户登录
+
+STATISE:
+    - http://www.api.com/statsie
+    - 统计

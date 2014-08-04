@@ -1,0 +1,10 @@
+
+public class Net{
+
+    {{range .}}
+    {{if .HasDesc}}/** {{.Desc}} */ {{end}}
+    {{if not .IsHost}}public static final String API_{{.Name}} = {{if not .IsAbsUrl}}{{.Host}} + {{end}}"{{.Url}}"; {{else}}public static final String {{.Name}} = "{{.Url}}";{{end}}
+    {{if .HasDesc}}/** CODE {{.Desc}} */ {{end}}
+    public static final int CODE_{{.Name}} = {{.Code}};
+    {{end}}
+}
