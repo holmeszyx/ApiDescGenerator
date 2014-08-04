@@ -21,3 +21,9 @@ _testmain.go
 
 *.exe
 *.test
+
+# Intellij project files
+*.iml
+*.ipr
+*.iws
+.idea/
